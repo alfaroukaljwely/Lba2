@@ -1,0 +1,28 @@
+<div class="container my-5" *ngIf="product">
+  <div class="row">
+    <div class="col-md-6">
+      <img [src]="product.imgURL" alt="{{ product.name }}" class="img-fluid" />
+    </div>
+    <div class="col-md-6">
+      <h1>{{ product.name }}</h1>
+      <p class="text-muted">Product ID: {{ product.id }}</p>
+
+      <h3 class="text-primary">${{ product.price }}</h3>
+
+      <p><strong>Quantity in Stock:</strong> {{ product.quantity }}</p>
+      <p><strong>Category ID:</strong> {{ product.categoryID }}</p>
+
+      <button class="btn btn-primary btn-lg">Add to Cart</button>
+      <a href="/products" class="btn btn-secondary btn-lg ms-2"
+        >Back to Products</a
+      >
+    </div>
+  </div>
+</div>
+
+<div class="container my-5" *ngIf="!product">
+  <div class="alert alert-danger">
+    <h2>Product not found</h2>
+    <a href="/products" class="btn btn-secondary">Back to Products</a>
+  </div>
+</div>

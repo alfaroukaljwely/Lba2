@@ -2,8 +2,10 @@
   <h1 class="text-center mb-4">Products</h1>
 
   <div class="row g-4">
-    @for (product of allProduct(); track product.$id) {
-    <div class="col-sm-6 col-md-4 col-lg-3">
+    <div
+      *ngFor="let product of allProduct(); trackBy: trackById"
+      class="col-sm-6 col-md-4 col-lg-3"
+    >
       <div class="product-card card h-100 shadow-sm">
         <div class="product-img-wrapper">
           <img
@@ -24,11 +26,30 @@
             <strong class="text-dark">Quantity:</strong> {{ product.quantity }}
           </p>
 
-          <button class="btn btn-primary w-100 mt-2">Add to Cart</button>
+          <div class="d-grid gap-2">
+            <a [routerLink]="['/product', product.id]" class="btn btn-primary"
+              >Go to page</a
+            >
+            <button
+              (click)="toggleDetail(product.id)"
+              class="btn btn-outline-secondary"
+            >
+              {{
+                selectedDetailId === product.id
+                  ? "Hide Details"
+                  : "Show Details"
+              }}
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="selectedDetailId === product.id" class="p-3 bg-light">
+          <app-product-detail
+            [product]="getOneById(product.id)"
+          ></app-product-detail>
         </div>
       </div>
     </div>
-    }
   </div>
 </div>
 
