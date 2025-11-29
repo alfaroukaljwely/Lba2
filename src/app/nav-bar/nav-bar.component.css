@@ -1,0 +1,6 @@
+.active-link {
+  color: var(--color-primary); /* overrides Bootstrap color */
+  font-weight: bold;
+  text-decoration: underline; /* optional */
+  text-underline-offset: 2px;
+}
