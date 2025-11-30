@@ -1,34 +1,64 @@
 <div class="container my-5">
   <h1 class="text-center mb-4">Products</h1>
 
-  <div class="row g-4">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading products...</p>
+  </div>
+
+  <!-- Error State -->
+  <div
+    *ngIf="errorMessage && !isLoading"
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
+    {{ errorMessage }}
+    <button
+      type="button"
+      class="btn-close"
+      (click)="errorMessage = null"
+    ></button>
+  </div>
+
+  <!-- Products Grid -->
+  <div *ngIf="!isLoading && products.length > 0" class="row g-4">
     <div
-      *ngFor="let product of allProduct(); trackBy: trackById"
+      *ngFor="let product of products; trackBy: trackById"
       class="col-sm-6 col-md-4 col-lg-3"
     >
       <div class="product-card card h-100 shadow-sm">
         <div class="product-img-wrapper">
           <img
-            [src]="product.imgURL"
+            [src]="product.image"
             class="card-img-top product-img"
-            alt="{{ product.name }}"
+            alt="{{ product.title }}"
           />
         </div>
 
         <div class="card-body">
-          <h5 class="card-title fw-bold">{{ product.name }}</h5>
+          <h5 class="card-title fw-bold">{{ product.title }}</h5>
 
           <p class="text-muted mb-1">
-            <strong class="text-dark">Price:</strong> ${{ product.price }}
+            <strong class="text-dark">Price:</strong> ${{
+              product.price.toFixed(2)
+            }}
           </p>
 
           <p class="text-muted">
-            <strong class="text-dark">Quantity:</strong> {{ product.quantity }}
+            <strong class="text-dark">Category:</strong> {{ product.category }}
+          </p>
+
+          <p class="text-muted small">
+            <strong class="text-dark">Rating:</strong> ⭐
+            {{ product.rating.rate }} ({{ product.rating.count }} reviews)
           </p>
 
           <div class="d-grid gap-2">
             <a [routerLink]="['/product', product.id]" class="btn btn-primary"
-              >Go to page</a
+              >View Details</a
             >
             <button
               (click)="toggleDetail(product.id)"
@@ -44,30 +74,18 @@
         </div>
 
         <div *ngIf="selectedDetailId === product.id" class="p-3 bg-light">
-          <app-product-detail
-            [product]="getOneById(product.id)"
-          ></app-product-detail>
+          <app-product-detail [product]="product"></app-product-detail>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!isLoading && products.length === 0"
+    class="alert alert-info text-center py-5"
+  >
+    <h5>No products found</h5>
+    <p>Please try again later.</p>
   </div>
 </div>
-
-<!-- <div class="container my-5">
-  <h1 class="text-center">Products</h1>
-  <div class="row g-4">
-    Card 1
-    @for (product of allProduct(); track product.$id) {
-    <div class="col-md-6 col-lg-4">
-      <div class="card h-100 shadow-sm">
-        <img [src]="product.imgURL" class="card-img-top" alt="Card Image 1" />
-        <div class="card-body">
-          <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text">price: ${{ product.price }}</p>
-          <p class="card-text">quantity : {{ product.quantity }}</p>
-        </div>
-      </div>
-    </div>
-    }
-  </div>
-</div> -->

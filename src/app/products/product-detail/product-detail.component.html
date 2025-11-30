@@ -1,28 +1,96 @@
-<div class="container my-5" *ngIf="product">
+<!-- Loading State -->
+<div *ngIf="isLoading" class="text-center py-4">
+  <div class="spinner-border text-primary spinner-border-sm" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p class="mt-2 small">Loading product details...</p>
+</div>
+
+<!-- Error State -->
+<div
+  *ngIf="errorMessage && !isLoading"
+  class="alert alert-danger alert-dismissible fade show"
+  role="alert"
+>
+  {{ errorMessage }}
+  <button
+    type="button"
+    class="btn-close btn-sm"
+    (click)="errorMessage = null"
+  ></button>
+</div>
+
+<!-- Full Product Details (Standalone View) -->
+<div class="container my-5" *ngIf="product && !isLoading">
   <div class="row">
     <div class="col-md-6">
-      <img [src]="product.imgURL" alt="{{ product.name }}" class="img-fluid" />
+      <img
+        [src]="product.image"
+        alt="{{ product.title }}"
+        class="img-fluid rounded"
+      />
     </div>
     <div class="col-md-6">
-      <h1>{{ product.name }}</h1>
+      <h1>{{ product.title }}</h1>
       <p class="text-muted">Product ID: {{ product.id }}</p>
 
-      <h3 class="text-primary">${{ product.price }}</h3>
+      <div class="mb-3">
+        <span class="badge bg-primary">{{ product.category }}</span>
+      </div>
 
-      <p><strong>Quantity in Stock:</strong> {{ product.quantity }}</p>
-      <p><strong>Category ID:</strong> {{ product.categoryID }}</p>
+      <h3 class="text-primary mb-3">${{ product.price.toFixed(2) }}</h3>
 
-      <button class="btn btn-primary btn-lg">Add to Cart</button>
-      <a href="/products" class="btn btn-secondary btn-lg ms-2"
-        >Back to Products</a
-      >
+      <div class="mb-4">
+        <p><strong>Rating:</strong></p>
+        <div class="d-flex align-items-center gap-2">
+          <span class="fs-5">⭐ {{ product.rating.rate }}</span>
+          <span class="text-muted">({{ product.rating.count }} reviews)</span>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h5>Description</h5>
+        <p>{{ product.description }}</p>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary btn-lg">Add to Cart</button>
+        <a href="/products" class="btn btn-outline-secondary btn-lg"
+          >Back to Products</a
+        >
+      </div>
     </div>
   </div>
 </div>
 
-<div class="container my-5" *ngIf="!product">
-  <div class="alert alert-danger">
-    <h2>Product not found</h2>
-    <a href="/products" class="btn btn-secondary">Back to Products</a>
+<!-- Inline Product Details (Card View) -->
+<div *ngIf="product && !isLoading && product" class="product-detail-inline">
+  <div class="row g-3">
+    <div class="col-sm-5">
+      <img
+        [src]="product.image"
+        alt="{{ product.title }}"
+        class="img-fluid rounded"
+        style="max-height: 150px; object-fit: cover"
+      />
+    </div>
+    <div class="col-sm-7">
+      <h6 class="fw-bold">{{ product.title }}</h6>
+      <p class="mb-1">
+        <strong>Price:</strong> ${{ product.price.toFixed(2) }}
+      </p>
+      <p class="mb-1"><strong>Category:</strong> {{ product.category }}</p>
+      <p class="mb-2"><strong>Rating:</strong> ⭐ {{ product.rating.rate }}</p>
+      <p class="small text-muted">
+        {{ product.description.substring(0, 100) }}...
+      </p>
+    </div>
   </div>
+</div>
+
+<!-- Not Found State -->
+<div class="alert alert-danger" *ngIf="!product && !isLoading && !errorMessage">
+  <h5>Product not found</h5>
+  <p>The requested product could not be found.</p>
+  <a href="/products" class="btn btn-secondary btn-sm">Back to Products</a>
 </div>

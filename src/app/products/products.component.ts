@@ -1,7 +1,8 @@
-import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ProductService, Product } from '../services/product.service';
+import { ProductService } from '../services/product.service';
+import { Root2 } from '../services/product.types';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 
 @Component({
@@ -12,38 +13,39 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
   styleUrl: './products.component.css',
 })
 export class ProductsComponent implements OnInit {
-  products: Product[] = [];
-  @Output() productSelected = new EventEmitter<Product>();
+  products: Root2[] = [];
+  isLoading = true;
+  errorMessage: string | null = null;
   // track which product detail is shown inline (by id)
   selectedDetailId: number | null = null;
 
   constructor(private productService: ProductService) {}
 
   ngOnInit() {
-    this.products = this.productService.getAllProducts();
+    this.loadProducts();
   }
 
-  allProduct(): Product[] {
-    return this.products;
-  }
-
-  filterProductsByCategory(category: number): Product[] {
-    return this.productService.filterProductsByCategory(category);
-  }
-
-  getOneById(id: number): Product | null {
-    return this.productService.getProductById(id);
-  }
-
-  onProductClick(product: Product) {
-    this.productSelected.emit(product);
+  loadProducts() {
+    this.isLoading = true;
+    this.errorMessage = null;
+    this.productService.getProducts().subscribe({
+      next: (data) => {
+        this.products = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading products:', err);
+        this.errorMessage = 'Failed to load products. Please try again later.';
+        this.isLoading = false;
+      },
+    });
   }
 
   toggleDetail(id: number) {
     this.selectedDetailId = this.selectedDetailId === id ? null : id;
   }
 
-  trackById(index: number, item: Product) {
+  trackById(index: number, item: Root2) {
     return item.id;
   }
 }
